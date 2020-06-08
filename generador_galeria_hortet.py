@@ -3,8 +3,6 @@
 # 4 de juny 2020 - joan <joan@riseup.net> 
 # joancatala.net
 #
-# generador_galeria_hortet.py 1.2
-#
 # Tinc un hortet, i aquest programa m'organitza les fotos automaticament, aixi les puc compartir
 # facilment. Jo faig les fotos i les publique al directori fotos-smartphone, i aquest programa
 # ja s'encarrega de copiar aquest directori, redimensionar-ho i mostrar-ho en una pàgina HTML.
@@ -86,6 +84,7 @@ os.system('find fotos/ -name "*.*" -execdir mogrify -resize 20% {} \;')
 print (fg.green + "[4]" + fg.rs + " Les imatges han segut redimensionades correctament!")
 time.sleep(2)
 
+
 #####################################################################################
 # Ara pinte cada linea de "llistat_ordenat.txt" i lliste els fitxers de dins
 #####################################################################################
@@ -119,11 +118,16 @@ with open('llistat_ordenat.txt') as fp:
             f=open("galeria.php","a")
             f.write("<p><h1>" + titol_sense_numero.replace("-", " ") + "</h1>\n") #Lleve els guionets del nom del directori
             for valor in files:
-                f.write('<img class="imatge" src="' + base + '/' + str(valor) + '" alt="Imatge molona del meu hortet DIY" />\n')
+                f.write('<a class="fresco" href="' + base + '/' + str(valor) + '"><img class="imatge" src="' + base + '/' + str(valor) + '" alt="Imatge molona del meu hortet DIY" /></a>\n')
+            
             f.write("</p><br /><br />\n\n")
+
+
+
 
         line = fp.readline()
         cnt += 1
+
 
 # Tanquem el fitxer generador de la pagina HTML
 f.close()
