@@ -3,6 +3,8 @@
 # 4 de juny 2020 - joan <joan@riseup.net> 
 # joancatala.net
 #
+# generador_galeria_hortet.py 1.2
+#
 # Tinc un hortet, i aquest programa m'organitza les fotos automaticament, aixi les puc compartir
 # facilment. Jo faig les fotos i les publique al directori fotos-smartphone, i aquest programa
 # ja s'encarrega de copiar aquest directori, redimensionar-ho i mostrar-ho en una pàgina HTML.
@@ -22,7 +24,7 @@ from sty import fg, bg, ef, rs, RgbFg
 
 os.system('clear')
 print ("=========================================================================================================\n")
-print ("GENERADOR DE LA GALERIA HTML DE L'HORTET DIY " + bg.yellow + "(Versio 1.0)" + bg.rs + "\n")
+print ("GENERADOR DE LA GALERIA HTML DE L'HORTET DIY " + bg.blue + "(Versio 1.0)" + bg.rs + "\n")
 print ("=========================================================================================================\n")
 
 #####################################################################################
@@ -55,17 +57,17 @@ os.system('cat llistat.txt  | sort -V > llistat_ordenat.txt')
 os.system('sed -i "s@-smartphone@@g" llistat_ordenat.txt')
 os.system('rm llistat.txt')
 
-print (fg.green + "[0]" + fg.rs + " Comencem a generar les imatges que trobarem al directori fotos-smartphone.")
+print (fg.green + "[0]" + fg.rs + " Comencem a registrar les imatges que trobarem al directori fotos-smartphone.")
 time.sleep(2)
 
-print (fg.green + "[1]" + fg.rs + " Ja he preparat el fitxer amb el llistat ordenat de directoris de la galeria.")
+print (fg.green + "[1]" + fg.rs + " Ja hem registrat tot el llistat de directoris i imatges per a  la galeria.")
 time.sleep(2)
 
 #####################################################################################
 # Em prepare les imatges. Faig un backup i llance un convert masiu
 #####################################################################################
 
-print (fg.green + "[2]" + fg.rs + " Preparant directori d'imatges. Aquest procès pot durar un poc...")
+print (fg.green + "[2]" + fg.rs + " Preparant el directori de les imatges. Aquest pas pot durar uns segons...")
 
 # Si existeix publicar.tar.gz, l'esborrem
 if os.path.exists('publicar.tar.gz'): 
@@ -77,13 +79,12 @@ if os.path.exists('fotos'):
 
 os.system('cp -rf fotos-smartphone fotos')
 
-print (fg.green + "[3]" + fg.rs + " Ara anem a comprimir la resolució de les imatges a mostrar. Aquest procès va a durar un poque més... ")
+print (fg.green + "[3]" + fg.rs + " Ara anem a comprimir la mida de les imatges. Aquest pas pot durar uns minuts... ")
 
 os.system('find fotos/ -name "*.*" -execdir mogrify -resize 20% {} \;')
 
-print (fg.green + "[4]" + fg.rs + " Els fitxers s'han comprimit correctament!")
+print (fg.green + "[4]" + fg.rs + " Les imatges han segut redimensionades correctament!")
 time.sleep(2)
-
 
 #####################################################################################
 # Ara pinte cada linea de "llistat_ordenat.txt" i lliste els fitxers de dins
@@ -103,7 +104,10 @@ with open('llistat_ordenat.txt') as fp:
             # Amb nova base i el rsplig, transforme una ruta completa i nomes pinte el ultim directori
             # per exemple /home/joan/directori sera "directori". Aixi aquest sera el titol de les galeries.
             nova_base = base.rsplit('/', 1)[1]
-            ruta_relativa= base.rsplit('/', 1)[1] # per a les galeries d'imatges
+            titol_sense_numero = base.split(" ")[-1:][0]
+            # DEBUG
+            # print ("RESULTAT: " + titol_sense_numero)
+            
             # DEBUG
             #print ("____________________________________________________________________________\n")
             #print (base.rsplit('/', 1)[1])
@@ -113,14 +117,13 @@ with open('llistat_ordenat.txt') as fp:
             
             #Inserte cada linea a un fitxer HTML
             f=open("galeria.php","a")
-            f.write("<p><h1>" + nova_base + "</h1>\n")
+            f.write("<p><h1>" + titol_sense_numero.replace("-", " ") + "</h1>\n") #Lleve els guionets del nom del directori
             for valor in files:
                 f.write('<img class="imatge" src="' + base + '/' + str(valor) + '" alt="Imatge molona del meu hortet DIY" />\n')
-            f.write("</p><br /><br />")
+            f.write("</p><br /><br />\n\n")
 
         line = fp.readline()
         cnt += 1
-
 
 # Tanquem el fitxer generador de la pagina HTML
 f.close()
@@ -128,10 +131,10 @@ f.close()
 # Esborrem el llistat de directoris
 os.system('rm llistat_ordenat.txt')
 
-print (fg.green + "[5]" + fg.rs + " Ja hem generat la galeria de fotos en el fitxer galeria.php!")
+print (fg.green + "[5]" + fg.rs + " Galeria de fotos generada en el fitxer galeria.php!")
 
 os.system('tar cfz publicar.tar.gz fotos galeria.php')
-print (fg.green + "[6]" + fg.rs + " Ja està llesta la galeria per a ser pujada al servidor web.")
+print (fg.green + "[6]" + fg.rs + " Galeria llesta i comprimida per a ser publicada al servidor web.")
 time.sleep(2)
 
 print (fg.green + "[7]" + fg.rs + " PROGRAMA FINALITZAT.\n\n")
